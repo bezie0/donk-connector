@@ -1,0 +1,46 @@
+{
+  "name": "donk-connector",
+  "version": "1.0.0",
+  "repository": "https://github.com/bezie0/donk-connector.git",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Bezie <bezie@protonmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "clean && tsc -p . && copyimages",
+    "clean": "rimraf dist",
+    "dev": "tsc-watch --onSuccess \"yalc push\"",
+    "copyimages": "copyfiles -f src/images/* dist/images"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/react": "^17.0.37",
+    "@types/styled-components": "^5.1.16",
+    "copyfiles": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "tsc-watch": "^4.5.0",
+    "typescript": "^4.5.2"
+  },
+  "resolutions": {
+    "styled-components": "^4.1.1"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^1.7.2",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@solana/wallet-adapter-base": "^0.7.1",
+    "@solana/wallet-adapter-react": "^0.13.1",
+    "@solana/wallet-adapter-react-ui": "^0.6.1",
+    "@solana/wallet-adapter-wallets": "^0.11.3",
+    "@solana/web3.js": "^1.31.0",
+    "@types/react-dom": "^17.0.11",
+    "framer-motion": "^4",
+    "react-dom": "^17.0.2",
+    "react-virtual": "^2.10.0"
+  }
+}
