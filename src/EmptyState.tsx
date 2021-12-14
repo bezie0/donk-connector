@@ -10,6 +10,10 @@ const EmptyState: React.FC = () => (
       border: "1px solid red",
       padding: 10,
       borderRadius: 5,
+      maxWidth: 300,
+      margin: "auto",
+      marginTop: 10,
+      marginBottom: 10,
     }}
   >
     <div

@@ -1,9 +1,9 @@
 import React, { CSSProperties, useEffect, useMemo } from "react";
 import { useVirtual } from "react-virtual";
-import { buildCDNImageURL } from "./utils";
-import { useDonkConnector } from "./DonkConnectorContext";
 import { useSelect } from "downshift";
 
+import { buildCDNImageURL } from "./utils";
+import { useDonkConnector } from "./DonkConnectorContext";
 import EmptyState from "./EmptyState";
 import { useWallet } from "@solana/wallet-adapter-react";
 
@@ -25,13 +25,8 @@ const menuStyles = {
 } as CSSProperties;
 
 const DonkSelector: React.FC<DonkSelectorProps> = ({ items }) => {
-  const {
-    mint: selectedMint,
-    setMint,
-    disconnect,
-    donks,
-    mints,
-  } = useDonkConnector();
+  const { mint: selectedMint, setMint, donks, mints } = useDonkConnector();
+  const numMints = mints.length;
   const wallet = useWallet();
   const parentRef = React.useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtual({
@@ -40,8 +35,6 @@ const DonkSelector: React.FC<DonkSelectorProps> = ({ items }) => {
     estimateSize: React.useCallback(() => 50, []),
     overscan: 5,
   });
-
-  const numMints = mints.length;
 
   const {
     getItemProps,
@@ -75,7 +68,6 @@ const DonkSelector: React.FC<DonkSelectorProps> = ({ items }) => {
   }, [selectedMint]);
 
   if (!wallet.publicKey) return null;
-
   if (numMints < 1) return <EmptyState />;
 
   return (
@@ -106,7 +98,6 @@ const DonkSelector: React.FC<DonkSelectorProps> = ({ items }) => {
           {rowVirtualizer.virtualItems.map((virtualRow: any) => {
             const mint = items[virtualRow.index];
             const [id, arweaveId] = donks[mint];
-            const image = buildCDNImageURL(arweaveId, 100);
 
             return (
               <li
@@ -138,7 +129,7 @@ const DonkSelector: React.FC<DonkSelectorProps> = ({ items }) => {
               >
                 <img
                   loading="lazy"
-                  src={image}
+                  src={buildCDNImageURL(arweaveId, 100)}
                   height={50}
                   width={50}
                   style={{ marginRight: 10 }}
