@@ -1,42 +1,34 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { Avatar, Box, BoxProps } from "@chakra-ui/react";
 
 import DonkSelector from "./DonkSelector";
-import { buildCDNImageURL, fetchMintsForWallet, getMintData } from "./utils";
+import { fetchDonks, fetchMintsForWallet } from "./utils";
 import { useDonkConnector } from "./DonkConnectorContext";
 
-export const DonkConnector: React.FC<BoxProps> = (props) => {
-  const { mint, setMint, setSelectorVisible, mints, setMints } =
-    useDonkConnector();
+export const DonkConnector: React.FC = () => {
+  const { setDonks, mints, setMints, setMint, disconnect } = useDonkConnector();
   const { connection } = useConnection();
   const wallet = useWallet();
-  const imageURL = useMemo(() => {
-    if (!mint) return;
-    const data = getMintData(mint);
-    return buildCDNImageURL(data.arweaveId);
-  }, [mint]);
 
   useEffect(() => {
+    if (!wallet.publicKey) {
+      // Disconnect when disconnecting wallet
+      disconnect();
+      return;
+    }
+
     const fetch = async () => {
-      const mints = await fetchMintsForWallet(wallet, connection);
+      const donks = await fetchDonks();
+      const mints = await fetchMintsForWallet(wallet, connection, donks);
+      setDonks(donks);
       setMints(mints);
+
+      // Default to first mint
+      if (mints.length) setMint(mints[0]);
     };
 
     fetch();
   }, [wallet.publicKey]);
 
-  if (!wallet.publicKey) return null;
-
-  return (
-    <Box {...props}>
-      <Avatar
-        cursor="pointer"
-        onClick={() => setSelectorVisible(true)}
-        src={mint ? imageURL : undefined}
-        _hover={{ opacity: 0.6, transition: "opacity 0.1s linear" }}
-      />
-      <DonkSelector items={mints} />
-    </Box>
-  );
+  return <DonkSelector items={mints} />;
 };

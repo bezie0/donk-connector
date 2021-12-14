@@ -1,146 +1,155 @@
-import React, { useState } from "react";
+import React, { CSSProperties, useEffect, useMemo } from "react";
 import { useVirtual } from "react-virtual";
-import {
-  Flex,
-  Image,
-  Text,
-  Box,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Spacer,
-  Skeleton,
-  ModalFooter,
-  Button,
-} from "@chakra-ui/react";
-
-import donks from "./fixtures/donks.json";
 import { buildCDNImageURL } from "./utils";
 import { useDonkConnector } from "./DonkConnectorContext";
+import { useSelect } from "downshift";
 
 import EmptyState from "./EmptyState";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface DonkSelectorProps {
   items: string[];
 }
 
+const menuStyles = {
+  backgroundColor: "#eee",
+  padding: 0,
+  listStyle: "none",
+  maxHeight: 50 * 5,
+  width: 300,
+  overflowY: "scroll",
+  position: "absolute",
+  left: 100,
+  zIndex: 999,
+  borderRadius: 5,
+} as CSSProperties;
+
 const DonkSelector: React.FC<DonkSelectorProps> = ({ items }) => {
   const {
     mint: selectedMint,
     setMint,
-    isSelectorVisible,
-    setSelectorVisible,
     disconnect,
+    donks,
+    mints,
   } = useDonkConnector();
-
-  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  const wallet = useWallet();
   const parentRef = React.useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtual({
     size: items.length,
     parentRef,
-    estimateSize: React.useCallback(() => 60, []),
+    estimateSize: React.useCallback(() => 50, []),
     overscan: 5,
   });
 
-  const setLoaded = (mint: string) =>
-    setLoadedImages({ [mint]: true, ...loadedImages });
-  const getLoaded = (mint: string) => Boolean(loadedImages[mint]);
+  const numMints = mints.length;
+
+  const {
+    getItemProps,
+    getMenuProps,
+    highlightedIndex,
+    selectedItem,
+    getToggleButtonProps,
+    isOpen,
+    selectItem,
+  } = useSelect({
+    items,
+    scrollIntoView: () => {},
+    selectedItem: selectedMint,
+    onHighlightedIndexChange: ({ highlightedIndex }) =>
+      typeof highlightedIndex === "number" &&
+      rowVirtualizer.scrollToIndex(highlightedIndex),
+    onSelectedItemChange: ({ selectedItem }) =>
+      typeof selectedItem === "string" && setMint(selectedItem),
+  });
+
+  const selectedImage = useMemo(() => {
+    if (!selectedMint) return;
+    const [, arweaveId] = donks[selectedMint];
+    return buildCDNImageURL(arweaveId);
+  }, [selectedMint]);
+
+  useEffect(() => {
+    if (!selectedMint && selectedItem) {
+      selectItem("");
+    }
+  }, [selectedMint]);
+
+  if (!wallet.publicKey) return null;
+
+  if (numMints < 1) return <EmptyState />;
 
   return (
-    <Modal isOpen={isSelectorVisible} onClose={() => setSelectorVisible(false)}>
-      <ModalOverlay />
-      <ModalContent bgGradient="linear(to-r, gray.600, gray.700)">
-        {items.length > 0 ? (
-          <>
-            <ModalHeader>Select a donk!</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Box
-                ref={parentRef}
-                height={300}
-                width="100%"
-                overflow="auto"
-                borderRadius={5}
-              >
-                <Box
-                  height={`${rowVirtualizer.totalSize}px`}
-                  width="100%"
-                  position="relative"
-                >
-                  {rowVirtualizer.virtualItems.map((virtualRow) => {
-                    const mint = items[virtualRow.index];
-                    const [id, arweaveId] = donks[mint];
-                    const image = buildCDNImageURL(arweaveId, 100);
+    <div style={{ maxWidth: 300, margin: "auto", position: "relative" }}>
+      {selectedImage && (
+        <button
+          type="button"
+          {...getToggleButtonProps()}
+          style={{ cursor: numMints > 1 ? "pointer" : "default" }}
+        >
+          <img
+            src={selectedImage}
+            style={{
+              borderRadius: "50%",
+            }}
+          />
+        </button>
+      )}
 
-                    return (
-                      <Flex
-                        alignItems="center"
-                        position="absolute"
-                        cursor="pointer"
-                        onClick={() => {
-                          setMint(mint);
-                          setSelectorVisible(false);
-                        }}
-                        top={0}
-                        left={0}
-                        width="100%"
-                        key={mint}
-                        height={`${virtualRow.size}px`}
-                        transform={`translateY(${virtualRow.start}px)`}
-                        borderWidth={mint === selectedMint ? 2 : 0}
-                        borderStyle="solid"
-                        borderColor="gray.500"
-                        bgColor={
-                          virtualRow.index % 2
-                            ? "blackAlpha.500"
-                            : "blackAlpha.600"
-                        }
-                        _hover={{ bgColor: "blackAlpha.700" }}
-                        px={2}
-                        py="5px"
-                      >
-                        <Skeleton
-                          height={50}
-                          width={50}
-                          mr={2}
-                          borderRadius={2}
-                          isLoaded={getLoaded(mint)}
-                        >
-                          <Image
-                            borderRadius="inherit"
-                            onLoad={() => setLoaded(mint)}
-                            loading="lazy"
-                            src={image}
-                          />
-                        </Skeleton>
-                        <Text fontSize="sm">Flunk Donkey #{id}</Text>
-                        <Spacer />
-                      </Flex>
-                    );
-                  })}
-                </Box>
-              </Box>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                bg="gray.800"
-                color="whiteAlpha.500"
-                _hover={{ bg: "gray.900" }}
-                size="sm"
-                onClick={disconnect}
+      {isOpen && (
+        <ul
+          {...getMenuProps({
+            ref: parentRef,
+            style: menuStyles,
+          })}
+        >
+          <li key="total-size" style={{ height: rowVirtualizer.totalSize }} />
+          {rowVirtualizer.virtualItems.map((virtualRow: any) => {
+            const mint = items[virtualRow.index];
+            const [id, arweaveId] = donks[mint];
+            const image = buildCDNImageURL(arweaveId, 100);
+
+            return (
+              <li
+                key={id}
+                {...getItemProps({
+                  index: virtualRow.index,
+                  item: items[virtualRow.index],
+                  style: {
+                    backgroundColor:
+                      highlightedIndex === virtualRow.index
+                        ? "lightgray"
+                        : "inherit",
+                    fontWeight:
+                      selectedItem && donks[selectedItem][0] === id
+                        ? "bold"
+                        : "normal",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: virtualRow.size,
+                    transform: `translateY(${virtualRow.start}px)`,
+                    display: "flex",
+                    alignItems: "center",
+                    color: "black",
+                    cursor: "pointer",
+                  },
+                })}
               >
-                Disconnect
-              </Button>
-            </ModalFooter>
-          </>
-        ) : (
-          <EmptyState />
-        )}
-      </ModalContent>
-    </Modal>
+                <img
+                  loading="lazy"
+                  src={image}
+                  height={50}
+                  width={50}
+                  style={{ marginRight: 10 }}
+                />
+                <span>Flunk Donkey #{id}</span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
   );
 };
 

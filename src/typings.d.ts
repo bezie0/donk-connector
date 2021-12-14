@@ -1,8 +1,4 @@
-type Data = [number, string];
-declare module "*donks.json" {
-  const value: Record<string, Data>;
-  export default value;
-}
+declare type Donks = Record<string, [number, string]>;
 
 declare module "*.svg" {
   const value: any;

@@ -1,66 +1,50 @@
 import React from "react";
-import {
-  Flex,
-  Image,
-  Box,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Center,
-  Link,
-} from "@chakra-ui/react";
 
-import solanart from "./images/solanart.webp";
-import magicEden from "./images/magiceden.svg";
-import alphaArt from "./images/alphaart.svg";
-import digitalEyes from "./images/digitaleyes.svg";
 import brap from "./images/brap.png";
 
 const EmptyState: React.FC = () => (
-  <>
-    <ModalHeader>
-      <Center mb={5}>
-        <Image height="40px" src={brap} mr={2} />
-        <Image height="40px" src={brap} mr={2} />
-        <Image height="40px" src={brap} mr={2} />
-      </Center>
-      <Flex>
-        Looks like you have no donks! Buy a donk on one of our supported
-        marketplaces:
-      </Flex>
-    </ModalHeader>
-    <ModalCloseButton />
-    <ModalBody>
-      <Flex alignItems="center" justifyContent="space-between">
-        <Box>
-          <Link href="https://solanart.io/collections/flunkdonkeys" isExternal>
-            <Image height="50px" src={solanart} />
-          </Link>
-        </Box>
-        <Box>
-          <Link
-            href="https://magiceden.io/marketplace/flunk_donkeys"
-            isExternal
-          >
-            <Image height="30px" src={magicEden} />
-          </Link>
-        </Box>
-        <Box>
-          <Link href="https://alpha.art/collection/flunk-donkeys" isExternal>
-            <Image height="30px" src={alphaArt} />
-          </Link>
-        </Box>
-        <Box>
-          <Link
-            href="https://digitaleyes.market/collections/Flunk%20Donkeys"
-            isExternal
-          >
-            <Image height="30px" src={digitalEyes} />
-          </Link>
-        </Box>
-      </Flex>
-    </ModalBody>
-  </>
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      border: "1px solid red",
+      padding: 10,
+      borderRadius: 5,
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        marginTop: 10,
+        marginBottom: 20,
+      }}
+    >
+      <img style={{ height: 40, width: 40, marginRight: 5 }} src={brap} />
+      <img style={{ height: 40, width: 40, marginRight: 5 }} src={brap} />
+      <img style={{ height: 40, width: 40, marginRight: 5 }} src={brap} />
+    </div>
+    <div style={{ marginBottom: 10 }}>
+      <strong>Looks like you have no donks!</strong>
+      <br />
+      Buy a donk on one of our supported marketplaces:
+    </div>
+    <a href="https://solanart.io/collections/flunkdonkeys" target="_blank">
+      Solanart
+    </a>
+    <a href="https://magiceden.io/marketplace/flunk_donkeys" target="_blank">
+      Magic Eden
+    </a>
+    <a href="https://alpha.art/collection/flunk-donkeys" target="_blank">
+      Alpha Art
+    </a>
+    <a
+      href="https://digitaleyes.market/collections/Flunk%20Donkeys"
+      target="_blank"
+    >
+      Digital Eyes
+    </a>
+  </div>
 );
 
 export default EmptyState;
