@@ -4,6 +4,7 @@ import {
   TOKEN_PROGRAM_ID,
 } from "./constants";
 import * as web3 from "@solana/web3.js";
+import { Donks } from "./types";
 
 import { WalletContextState } from "@solana/wallet-adapter-react";
 

@@ -6,6 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import { useLocalStorage } from "@solana/wallet-adapter-react";
+import { Donks } from "./types";
 
 interface DonkConnectorContextProps {
   mint?: string;
