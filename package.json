@@ -1,6 +1,6 @@
 {
   "name": "donk-connector",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "repository": "https://github.com/bezie0/donk-connector.git",
   "author": "Bezie <bezie@protonmail.com>",
   "license": "MIT",
@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -cw & nodemon --watch ./dist/index.js --exec \"yalc push\"",
+    "start": "rollup -cw & nodemon --watch ./dist/index.d.ts --exec \"yalc push\"",
     "clean": "rimraf dist"
   },
   "devDependencies": {
@@ -27,7 +27,6 @@
     "@solana/web3.js": "^1.31.0",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
-    "downshift": "^6.1.7",
     "postcss": "^8.4.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -41,13 +40,16 @@
     "typescript": "^4.5.3"
   },
   "peerDependencies": {
+    "@emotion/react": ">= 11.x",
+    "@emotion/styled": ">= 11.x",
+    "@popperjs/core": ">= 2.x",
     "@solana/wallet-adapter-base": ">= 0.7",
     "@solana/wallet-adapter-react": ">= 0.13",
     "@solana/web3.js": ">= 1",
-    "downshift": ">= 6.1.x",
     "react": ">= 17",
     "react-dom": ">= 17",
-    "react-virtual": "^2.10.0"
+    "react-popper": ">= 2.2.5",
+    "react-virtual": ">= 2.10.0"
   },
   "dependencies": {
     "tslib": "^2.3.1"
