@@ -20,6 +20,7 @@ export const DonkConnector: React.FC = () => {
     const fetch = async () => {
       const donks = await fetchDonks();
       const mints = await fetchMintsForWallet(wallet, connection, donks);
+
       setDonks(donks);
       setMints(mints);
 

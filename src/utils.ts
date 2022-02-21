@@ -58,7 +58,8 @@ export const fetchMintsForWallet = async (
       const mint = getMint(account);
       return mints.includes(mint) && getAmount(account) === "1";
     })
-    .map(({ account }) => getMint(account));
+    .map(({ account }) => getMint(account))
+    .sort((a, b) => donks[a][0] - donks[b][0]);
 
   return values;
 };
