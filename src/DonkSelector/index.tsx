@@ -70,6 +70,7 @@ const DonkSelector: React.FC<DonkSelectorProps> = ({ items }) => {
         onClick={() => setIsVisible(true)}
       >
         <img src={selectedImage || avatar} />
+        <span>&#9660;</span>
       </AvatarButton>
       {isVisible && (
         <PopperContainer

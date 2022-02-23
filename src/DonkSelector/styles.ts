@@ -39,6 +39,10 @@ export const AvatarButton = styled.button`
   background: transparent;
   border: 0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  color: #222222;
 
   &:hover {
     opacity: 0.6;
@@ -49,6 +53,7 @@ export const AvatarButton = styled.button`
     width: 50px;
     height: 50px;
     border-radius: 100%;
+    margin-right: 5px;
   }
 `;
 
